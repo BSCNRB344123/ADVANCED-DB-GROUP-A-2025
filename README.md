@@ -1,7 +1,7 @@
 # BCS 4103 Advanced Database Systems - Project
 ## Optimizing Database Performance with PostgreSQL and Node.js for Wine Quality Dataset
 
-**Group Name/Number:** `[A]`
+**Group Name:** `A`
 **GitHub Repository:** `[https://github.com/BSCNRB344123/ADVANCED-DB-GROUP-A-2025]`
 **Live API Documentation (when running):** [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
