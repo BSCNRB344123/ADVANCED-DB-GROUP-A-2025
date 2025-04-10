@@ -1,22 +1,32 @@
 // database/populate.js
-require('dotenv').config({ path: '../wine-quality-backend/.env' }); // Load .env from node_backend
-const fs = require('fs');
 const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../wine-quality-backend/.env') }); // Load .env from node_backend
+const fs = require('fs');
 const { Pool } = require('pg');
 const csv = require('csv-parser');
 
 console.log('--- DEBUG ---');
-console.log(`Attempting to use DB Password: ${process.env.DB_PASSWORD}`);
-console.log(`Type of DB Password: ${typeof process.env.DB_PASSWORD}`);
+console.log(`Attempting to read from .env path: ${path.resolve(__dirname, '../wine-quality-backend/.env')}`);
+console.log(`DB_USER read: '${process.env.DB_USER}'`);
+console.log(`DB_PASSWORD read: '${process.env.DB_PASSWORD}'`);
+console.log(`Type of DB_PASSWORD: ${typeof process.env.DB_PASSWORD}`);
 console.log('--- END DEBUG ---');
 
-const pool = new Pool({
+console.log('--- DEBUG BEFORE POOL CREATION ---');
+const dbConfigForPool = {
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-});
+  ssl: false,
+};
+console.log(`Config being passed to Pool`);
+console.log(JSON.stringify(dbConfigForPool, null, 2));
+console.log('Type of password in config:', typeof dbConfigForPool.password);
+console.log('--- END DEBUG BEFORE POOL CREATION ---');
+
+const pool = new Pool(dbConfigForPool);
 
 const RED_WINE_FILE = path.join(__dirname, '..', 'data', 'winequality-red.csv');
 const WHITE_WINE_FILE = path.join(__dirname, '..', 'data', 'winequality-white.csv');
@@ -75,10 +85,10 @@ function processFile(filePath, wineType, recordsArray) {
 
 async function populateData() {
   let client; // Define client outside try block for access in finally
-  console.log('Attempting to connect to database...');
+  console.log('Attempting to connect to database (populateData)...');
   try {
     client = await pool.connect();
-    console.log('Connected to database.');
+    console.log('Connected to database (populateData).');
 
     // Optional: Clear existing data
     console.log('Clearing existing data from wines and related tables...');

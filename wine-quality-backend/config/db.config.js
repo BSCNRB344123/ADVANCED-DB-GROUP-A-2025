@@ -37,6 +37,9 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
   ssl: sslConfig, // Use the sslConfig object here (will be null if SSL is disabled)
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis:20000,
+  max: 30,
 });
 
 pool.on('connect', (client) => { // Changed event handler slightly for clarity

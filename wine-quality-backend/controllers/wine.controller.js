@@ -46,7 +46,7 @@ exports.getWineById = async (req, res) => {
 
 // POST /api/wines - Add a new wine
 exports.createWine = async (req, res) => {
-    const { fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality } = req.body;
+    const { wine_type, fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality } = req.body;
 
     // Basic validation
     if (quality === undefined || quality < 0 || quality > 10) {
@@ -55,10 +55,10 @@ exports.createWine = async (req, res) => {
     // Add more validation as needed for other fields
 
     const queryText = `
-        INSERT INTO wines (fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        INSERT INTO wines (wine_type, fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
         RETURNING *;`; // RETURNING * sends back the newly created row
-    const values = [fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality];
+    const values = [wine_type, fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality];
 
     try {
         const result = await db.query(queryText, values);
@@ -74,13 +74,14 @@ exports.createWine = async (req, res) => {
 exports.updateWine = async (req, res) => {
     const { id } = req.params;
     // Only update fields provided in the body
-    const { fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality } = req.body;
+    const { wine_type, fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol, quality } = req.body;
 
     // Construct the SET part of the query dynamically
     const fields = [];
     const values = [];
     let paramIndex = 1;
 
+    if (wine_type != undefined) { fields.push(`wine_type = $${paramIndex++}`); values.push(wine_type); }
     if (fixed_acidity !== undefined) { fields.push(`fixed_acidity = $${paramIndex++}`); values.push(fixed_acidity); }
     if (volatile_acidity !== undefined) { fields.push(`volatile_acidity = $${paramIndex++}`); values.push(volatile_acidity); }
     if (citric_acid !== undefined) { fields.push(`citric_acid = $${paramIndex++}`); values.push(citric_acid); }
